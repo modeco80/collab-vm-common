@@ -34,7 +34,7 @@ enum RenameResult : ubyte {
 
 /// Rename op
 table RenameOp {
-	result: RenameResult
+	result: RenameResult;
 
 	/// Old username of the person who renamed.
 	/// The user performing a rename operation should
