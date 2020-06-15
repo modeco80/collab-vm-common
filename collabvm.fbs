@@ -1,0 +1,149 @@
+// Protocol definitions for CollabVM 2.0
+
+namespace CollabVM;
+
+/// Chat instruction.
+table ChatOp {
+    /// Username of the person who sent the message.
+    username: string;
+
+    /// Message contents
+    message: string;
+}
+
+/// Connect instruction.
+/// Username is optional. If blank, 
+/// server will generate a guest[XXXXX] username for you.
+table ConnectOp { 
+	id: ushort;
+	
+	username: string;
+}
+
+/// Result of a UserRenameOp.
+enum RenameResult : ubyte {
+    /// Renamed successfully; no problems.
+    Ok,
+
+    /// Username is invalid (either contains bad characters, or is too long).
+    Invalid,
+
+    /// Someone is already using that username.
+    UsernameTaken
+}
+
+/// User->Server rename op
+table RenameOp {
+	result: RenameResult
+
+
+    /// Old username of the person who renamed.
+	/// Empty
+    oldUsername: string;
+
+    /// New username.
+    newUsername: string;
+}
+
+
+table JoinOp {
+    /// Username of the user who joined.
+    username: string;
+}
+
+table LeaveOp {
+    /// Username of the user to be removed.
+    username: string;
+}
+
+/// Turn request message.
+/// Has no applcable fields.
+struct TurnOp { dummyField: ushort; }
+
+/// Cancel turn request message.
+/// Has no applcable fields.
+struct CancelTurnOp { dummyField: ushort; }
+
+// Control instructions
+
+/// 0x0 -> 65535x65535 coordinate pair
+struct CoordPair {
+    /// X coordinate
+    x: ushort;
+
+    /// Y coordinate
+    y: ushort;
+}
+
+/// Display Resize operation.
+struct ResizeOp {
+  newSize: CoordPair;  
+}
+
+/// Image rect operation.
+table ImageOp {
+    /// Location of where the new area will be placed.
+    location: CoordPair;
+
+    /// Width and height of the image rectangle.
+    size: CoordPair;
+
+    /// Image data.
+    data: [byte];
+}
+
+struct CursorMoveOp {
+    location: CoordPair;
+}
+
+/// Key operation.
+struct KeyOp {
+    key: ushort;
+    down: bool;
+}
+
+/// Mouse operation.
+struct MouseOp {
+    position: CoordPair;
+    buttonMask: byte;
+}
+
+/// Turn queue.
+table TurnQueueOp {
+    /// The total time (when this queue instruction was sent) of the queue in milliseconds.
+    waitTime: ulong;
+
+    /// Usernames of all users in the queue. Index 0 will be the user currently taking a turn.
+    users: [string];
+}
+
+/// Client->server message table
+table Message {
+    /// CollabVM Instructions
+    connect: ConnectOp;
+    turn: TurnOp;
+    cancelTurn: CancelTurnOp;
+    chat: ChatOp;
+    rename: RenameOp;
+    join: JoinOp;
+    leave: LeaveOp;
+
+    /// Control instructions
+    key: KeyOp;
+    mouse: MouseOp;
+}
+
+
+
+/// Server->client message table
+table ServerMessage {
+    chat: ChatOp;
+    turnQueue: TurnQueue;
+    rename: RenameOp;
+
+    resize: ResizeOp;
+    image: ImageOp;
+    cursorMove: CursorMoveOp;
+}
+
+root_type Message;
