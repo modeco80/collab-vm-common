@@ -2,6 +2,15 @@
 
 namespace CollabVM;
 
+/// 0x0 -> 65535x65535 coordinate pair
+struct CoordPair {
+	/// X coordinate
+	x: ushort;
+
+	/// Y coordinate
+	y: ushort;
+}
+
 /// Chat instruction.
 table ChatOp {
 	/// Username of the person who sent the message.
@@ -66,15 +75,6 @@ struct CancelTurnOp { dummyField: ushort; }
 
 // Control instructions
 
-/// 0x0 -> 65535x65535 coordinate pair
-struct CoordPair {
-	/// X coordinate
-	x: ushort;
-
-	/// Y coordinate
-	y: ushort;
-}
-
 /// Display Resize operation.
 struct ResizeOp {
   newSize: CoordPair;  
@@ -109,7 +109,7 @@ struct MouseOp {
 }
 
 /// Turn queue.
-table TurnQueueOp {
+table TurnQueue {
 	/// The total time (when this queue instruction was sent) of the queue in milliseconds.
 	waitTime: ulong;
 
@@ -117,11 +117,12 @@ table TurnQueueOp {
 	users: [string];
 }
 
-/// Client->server message table
+/// Message table
 table Message {
 	/// CollabVM Instructions
 	connect: ConnectOp;
 	turn: TurnOp;
+	turnQueue: TurnQueue;
 	cancelTurn: CancelTurnOp;
 	chat: ChatOp;
 	rename: RenameOp;
@@ -131,16 +132,7 @@ table Message {
 	/// Control instructions
 	key: KeyOp;
 	mouse: MouseOp;
-}
-
-/// Server->client message table
-table ServerMessage {
-	chat: ChatOp;
-	turnQueue: TurnQueue;
-	rename: RenameOp;
-
-	resize: ResizeOp;
-	image: ImageOp;
+	
 	cursorMove: CursorMoveOp;
 }
 
