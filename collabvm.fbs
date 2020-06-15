@@ -4,11 +4,11 @@ namespace CollabVM;
 
 /// Chat instruction.
 table ChatOp {
-    /// Username of the person who sent the message.
-    username: string;
+	/// Username of the person who sent the message.
+	username: string;
 
-    /// Message contents
-    message: string;
+	/// Message contents
+	message: string;
 }
 
 /// Connect instruction.
@@ -22,38 +22,38 @@ table ConnectOp {
 
 /// Result of a UserRenameOp.
 enum RenameResult : ubyte {
-    /// Renamed successfully; no problems.
-    Ok,
+	/// Renamed successfully; no problems.
+	Ok,
 
-    /// Username is invalid (either contains bad characters, or is too long).
-    Invalid,
+	/// Username is invalid (either contains bad characters, or is too long).
+	Invalid,
 
-    /// Someone is already using that username.
-    UsernameTaken
+	/// Someone is already using that username.
+	UsernameTaken
 }
 
-/// User->Server rename op
+/// Rename op
 table RenameOp {
 	result: RenameResult
 
+	/// Old username of the person who renamed.
+	/// The user performing a rename operation should
+	/// keep this field empty, as it is only used by
+	/// the server to broadcast the new name.
+	oldUsername: string;
 
-    /// Old username of the person who renamed.
-	/// Empty
-    oldUsername: string;
-
-    /// New username.
-    newUsername: string;
+	/// New username.
+	newUsername: string;
 }
 
-
 table JoinOp {
-    /// Username of the user who joined.
-    username: string;
+	/// Username of the user who joined.
+	username: string;
 }
 
 table LeaveOp {
-    /// Username of the user to be removed.
-    username: string;
+	/// Username of the user to be removed.
+	username: string;
 }
 
 /// Turn request message.
@@ -68,11 +68,11 @@ struct CancelTurnOp { dummyField: ushort; }
 
 /// 0x0 -> 65535x65535 coordinate pair
 struct CoordPair {
-    /// X coordinate
-    x: ushort;
+	/// X coordinate
+	x: ushort;
 
-    /// Y coordinate
-    y: ushort;
+	/// Y coordinate
+	y: ushort;
 }
 
 /// Display Resize operation.
@@ -82,68 +82,66 @@ struct ResizeOp {
 
 /// Image rect operation.
 table ImageOp {
-    /// Location of where the new area will be placed.
-    location: CoordPair;
+	/// Location of where the new area will be placed.
+	location: CoordPair;
 
-    /// Width and height of the image rectangle.
-    size: CoordPair;
+	/// Width and height of the image rectangle.
+	size: CoordPair;
 
-    /// Image data.
-    data: [byte];
+	/// Image data.
+	data: [byte];
 }
 
 struct CursorMoveOp {
-    location: CoordPair;
+	location: CoordPair;
 }
 
 /// Key operation.
 struct KeyOp {
-    key: ushort;
-    down: bool;
+	key: ushort;
+	down: bool;
 }
 
 /// Mouse operation.
 struct MouseOp {
-    position: CoordPair;
-    buttonMask: byte;
+	position: CoordPair;
+	buttonMask: byte;
 }
 
 /// Turn queue.
 table TurnQueueOp {
-    /// The total time (when this queue instruction was sent) of the queue in milliseconds.
-    waitTime: ulong;
+	/// The total time (when this queue instruction was sent) of the queue in milliseconds.
+	waitTime: ulong;
 
-    /// Usernames of all users in the queue. Index 0 will be the user currently taking a turn.
-    users: [string];
+	/// Usernames of all users in the queue. Index 0 will be the user currently taking a turn.
+	users: [string];
 }
 
 /// Client->server message table
 table Message {
-    /// CollabVM Instructions
-    connect: ConnectOp;
-    turn: TurnOp;
-    cancelTurn: CancelTurnOp;
-    chat: ChatOp;
-    rename: RenameOp;
-    join: JoinOp;
-    leave: LeaveOp;
+	/// CollabVM Instructions
+	connect: ConnectOp;
+	turn: TurnOp;
+	cancelTurn: CancelTurnOp;
+	chat: ChatOp;
+	rename: RenameOp;
+	join: JoinOp;
+	leave: LeaveOp;
 
-    /// Control instructions
-    key: KeyOp;
-    mouse: MouseOp;
+	/// Control instructions
+	key: KeyOp;
+	mouse: MouseOp;
 }
-
-
 
 /// Server->client message table
 table ServerMessage {
-    chat: ChatOp;
-    turnQueue: TurnQueue;
-    rename: RenameOp;
+	chat: ChatOp;
+	turnQueue: TurnQueue;
+	rename: RenameOp;
 
-    resize: ResizeOp;
-    image: ImageOp;
-    cursorMove: CursorMoveOp;
+	resize: ResizeOp;
+	image: ImageOp;
+	cursorMove: CursorMoveOp;
 }
 
 root_type Message;
