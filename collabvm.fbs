@@ -29,23 +29,33 @@ table ConnectOp {
 	username: string;
 }
 
-
 table ListNode {
+	/// ID of the node.
 	id: ushort;
+	
+	/// Front-facing name of the node.
+	name: string;
+	
+	/// Thumbnail to display.
 	thumb: [ubyte];
 }
 
 table ListOp {
-	nodes: [ListNode]
+	/// Leave empty to have server send you this instruction back
+	/// with a list of nodes.
+	nodes: [ListNode];
 }
 
 /// Result of a UserRenameOp.
 enum RenameResult : ubyte {
-	/// Renamed successfully; no problems.
+	/// Renamed successfully.
 	Ok,
 
 	/// Username is invalid (either contains bad characters, or is too long).
 	Invalid,
+	
+	/// TODO
+	RegisteredUsername,
 
 	/// Someone is already using that username.
 	UsernameTaken
@@ -87,7 +97,8 @@ struct CancelTurnOp { dummyField: ushort; }
 
 /// Display Resize operation.
 struct ResizeOp {
-  newSize: CoordPair;  
+	/// The new size of the screen.
+	newSize: CoordPair;  
 }
 
 /// Image rect operation.
@@ -130,19 +141,28 @@ table TurnQueue {
 /// Message table
 table Message {
 	/// CollabVM Instructions
+	
 	connect: ConnectOp;
+	
 	turn: TurnOp;
+	
 	turnQueue: TurnQueue;
+	
 	cancelTurn: CancelTurnOp;
+	
 	chat: ChatOp;
+	
 	rename: RenameOp;
+	
 	join: JoinOp;
+	
 	leave: LeaveOp;
 
 	list: ListOp;
 
 	/// Control instructions
 	key: KeyOp;
+	
 	mouse: MouseOp;
 	
 	cursorMove: CursorMoveOp;
