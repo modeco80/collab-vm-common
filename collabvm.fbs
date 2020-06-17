@@ -29,6 +29,16 @@ table ConnectOp {
 	username: string;
 }
 
+
+table ListNode {
+	id: ushort;
+	thumb: [ubyte];
+}
+
+table ListOp {
+	nodes: [ListNode]
+}
+
 /// Result of a UserRenameOp.
 enum RenameResult : ubyte {
 	/// Renamed successfully; no problems.
@@ -128,6 +138,8 @@ table Message {
 	rename: RenameOp;
 	join: JoinOp;
 	leave: LeaveOp;
+
+	list: ListOp;
 
 	/// Control instructions
 	key: KeyOp;
