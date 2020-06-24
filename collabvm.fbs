@@ -2,6 +2,13 @@
 
 namespace CollabVM;
 
+/// User type enum
+enum UserType : ubyte {
+	Guest,
+	Registered,
+	Admin
+}
+
 /// 0x0 -> 65535x65535 coordinate pair
 struct CoordPair {
 	/// X coordinate
@@ -113,6 +120,8 @@ table ImageOp {
 	data: [byte];
 }
 
+/// Server to client instruction to have the cursor move.
+/// NOTE: could be made worthless by broadcasting mouse events.
 struct CursorMoveOp {
 	location: CoordPair;
 }
@@ -138,9 +147,26 @@ table TurnQueue {
 	users: [string];
 }
 
+/// Type of the message stored in the Message table.
+enum MessageType : ubyte {
+	connect,
+	turn,
+	queue,
+	cancelTurn,
+	chat,
+	rename,
+	join,
+	leave,
+	list,
+	key,
+	mouse
+}
+
 /// Message table
+/// ONLY ONE MESSAGE SHOULD BE POPULATED
 table Message {
-	/// CollabVM Instructions
+	/// Which message type to isolate
+	which: MessageType;
 	
 	connect: ConnectOp;
 	
@@ -159,13 +185,10 @@ table Message {
 	leave: LeaveOp;
 
 	list: ListOp;
-
-	/// Control instructions
+	
 	key: KeyOp;
 	
 	mouse: MouseOp;
-	
-	cursorMove: CursorMoveOp;
 }
 
 root_type Message;
