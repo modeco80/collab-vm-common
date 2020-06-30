@@ -82,12 +82,12 @@ table RenameOp {
 	newUsername: string;
 }
 
-table JoinOp {
+table AdduserOp {
 	/// Username of the user who joined.
 	username: string;
 }
 
-table LeaveOp {
+table RemuserOp {
 	/// Username of the user to be removed.
 	username: string;
 }
@@ -120,12 +120,6 @@ table ImageOp {
 	data: [byte];
 }
 
-/// Server to client instruction to have the cursor move.
-/// NOTE: could be made worthless by broadcasting mouse events.
-struct CursorMoveOp {
-	location: CoordPair;
-}
-
 /// Key operation.
 struct KeyOp {
 	key: ushort;
@@ -155,8 +149,8 @@ enum MessageType : ubyte {
 	cancelTurn,
 	chat,
 	rename,
-	join,
-	leave,
+	adduser,
+	remuser,
 	list,
 	key,
 	mouse
@@ -180,9 +174,9 @@ table Message {
 	
 	rename: RenameOp;
 	
-	join: JoinOp;
+	adduser: AdduserOp;
 	
-	leave: LeaveOp;
+	remuser: RemuserOp;
 
 	list: ListOp;
 	
