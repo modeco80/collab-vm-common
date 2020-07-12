@@ -1,0 +1,110 @@
+// Public Draft Protocol definitions for CollabVM Agent 2.0
+// These are expected to change often!
+
+namespace CollabVM.Agent;
+
+
+enum FileUploadResult : ubyte {
+	OK,
+	
+	ErrorUploading,
+	
+	/// not really an error, but
+	/// it should still be presesented to users
+	ErrorExecuting,
+	
+	/// error creating file on VM
+	ErrorCreating
+}
+
+enum BlastCapabilites : ubyte {
+	/// No blast capabilities.
+	None,
+	
+	/// Blast screen.
+	BlastScreen
+}
+
+table AgentHandshake {
+	/// 1/anything other than 0 if client wants the Agent
+	/// to optionally start handshaking Blast.
+	/// Values past 1 may be used for future Blast versions.
+	wantsBlast: ubyte;
+	
+	// TODO document
+	
+	osName: string;
+	osVersion: string;
+	nodeName: string;
+	userName: string;
+}
+
+table FileUpload {
+	filename: string;
+	
+	/// Set when the server returns the upload result to the user
+	result: FileUploadResult;
+	
+	/// ID
+	id: ulong;
+	
+	/// How many chunks are needed
+	chunksNeeded: ulong;
+}
+
+/// file upload chunk
+table FileUploadChunk {
+	id: string;
+	
+	chunkId: ulong;
+	
+	data: [byte];
+}
+
+/// Blast handskake
+table BlastHandshake {
+	/// The blast version this Agent or Server supports.
+	blastVersion: ubyte;
+	
+	/// Blast capabilities. If none, either end can assume
+	/// they don't support Blast.
+	blastCapabilities: BlastCapabilites;
+}
+
+table BlastScreen {
+	/// The entire screen, excluding the mouse cursor.
+	/// The server is expected to composite the cursor where it should be,
+	/// and then encode it as a streaming video.
+	data: [byte];
+	
+	// don't want to bring in XYPair as this is the only case
+	cursorLocationX: ushort;
+	cursorLocationY: ushort;
+	
+	/// Current cursor in RGBA format,
+	/// not included if cursor isn't needed to be changed
+	currentCursor: [byte];
+}
+
+enum AgentMessageType : ubyte {
+	hello,
+	upload,
+	blast,
+	bscreen
+}
+
+/// Message table
+table AgentMessage {
+	which: AgentMessageType;
+	
+	// AGENT
+	handshake: AgentHandshake;
+	upload: FileUpload;
+	
+	
+	// BLAST (V1)
+	blast: BlastHandshake;
+	bscreen: BlastScreen;
+}
+
+root_type AgentMessage;

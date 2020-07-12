@@ -10,7 +10,7 @@ enum UserType : ubyte {
 }
 
 /// 0x0 -> 65535x65535 coordinate pair
-struct CoordPair {
+struct XYPair {
 	/// X coordinate
 	x: ushort;
 
@@ -105,19 +105,19 @@ struct CancelTurnOp { dummyField: ushort; }
 /// Display Resize operation.
 struct ResizeOp {
 	/// The new size of the screen.
-	newSize: CoordPair;  
+	newSize: XYPair;  
 }
 
 /// Image rect operation.
 table ImageOp {
 	/// Location of where the new area will be placed.
-	location: CoordPair;
+	location: XYPair;
 
 	/// Width and height of the image rectangle.
-	size: CoordPair;
+	size: XYPair;
 
 	/// Image data.
-	data: [byte];
+	data: [ubyte];
 }
 
 /// Key operation.
@@ -128,8 +128,15 @@ struct KeyOp {
 
 /// Mouse operation.
 struct MouseOp {
-	position: CoordPair;
+	position: XYPair;
 	buttonMask: byte;
+}
+
+table CursorUpdateOp {
+	size: XYPair;
+	
+	/// Raw bitmap data of cursor.
+	data: [ubyte];
 }
 
 /// Turn queue.
@@ -153,7 +160,8 @@ enum MessageType : ubyte {
 	remuser,
 	list,
 	key,
-	mouse
+	mouse,
+	cursorUpdate
 }
 
 /// Message table
@@ -183,6 +191,8 @@ table Message {
 	key: KeyOp;
 	
 	mouse: MouseOp;
+	
+	cursorUpdate: CursorUpdateOp;
 }
 
 root_type Message;
